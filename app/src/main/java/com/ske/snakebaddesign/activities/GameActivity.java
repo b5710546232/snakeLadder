@@ -3,28 +3,24 @@ package com.ske.snakebaddesign.activities;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 import com.ske.snakebaddesign.R;
 import com.ske.snakebaddesign.guis.BoardView;
-
-import java.util.Random;
+import com.ske.snakebaddesign.models.Game;
 
 public class GameActivity extends AppCompatActivity {
-
-    private int boardSize;
-    private int p1Position;
-    private int p2Position;
-    private int turn;
 
     private BoardView boardView;
     private Button buttonTakeTurn;
     private Button buttonRestart;
     private TextView textPlayerTurn;
+    private Game game;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,71 +52,76 @@ public class GameActivity extends AppCompatActivity {
             }
         });
         textPlayerTurn = (TextView) findViewById(R.id.text_player_turn);
+        game = new Game();
     }
 
     private void resetGame() {
-        turn = 0;
-        p1Position = 0;
-        p2Position = 0;
-        boardSize = 6;
-        boardView.setBoardSize(boardSize);
-        boardView.setP1Position(p1Position);
-        boardView.setP2Position(p2Position);
+        game.reset();
+        boardView.setBoardSize(game.getBoard().getBoardSize());
+        boardView.setP1Position(game.getPlayer1().getPostion());
+        boardView.setP2Position(game.getPlayer2().getPostion());
     }
 
     private void takeTurn() {
-        final int value = 1 + new Random().nextInt(6);
+        Log.e("check", "hi" + game.getTurn() +"takeTurn");
+        game.rollDice();
+        Log.e("check","die "+game.getDie().getValue());
+        final int value = game.getDie().getValue();
         String title = "You rolled a die";
-        String msg = "You got " + value;
-        OnClickListener listener = new OnClickListener() {
+        String msg = "You got " + game.getDie().getValue();
+                OnClickListener listener = new OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 moveCurrentPiece(value);
                 dialog.dismiss();
             }
         };
         displayDialog(title, msg, listener);
+
     }
 
+
     private void moveCurrentPiece(int value) {
-        if (turn % 2 == 0) {
-            p1Position = adjustPosition(p1Position, value);
-            boardView.setP1Position(p1Position);
+        if(game.getTurn() % 2 ==0 ){
+            game.movePlayer(game.getPlayer1(),value);
+            boardView.setP1Position(game.getPlayer1().getPostion());
             textPlayerTurn.setText("Player 2's Turn");
-        } else {
-            p2Position = adjustPosition(p2Position, value);
-            boardView.setP2Position(p2Position);
+        }
+        else{
+            game.movePlayer(game.getPlayer2(),value);
+            boardView.setP2Position(game.getPlayer2().getPostion());
             textPlayerTurn.setText("Player 1's Turn");
         }
         checkWin();
-        turn++;
+        game.nextTurn();
+
     }
 
-    private int adjustPosition(int current, int distance) {
-        current = current + distance;
-        int maxSquare = boardSize * boardSize - 1;
-        if(current > maxSquare) {
-            current = maxSquare - (current - maxSquare);
-        }
-        return current;
-    }
 
     private void checkWin() {
         String title = "Game Over";
         String msg = "";
         OnClickListener listener = new OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                resetGame();
+//                resetGame();
                 dialog.dismiss();
             }
         };
-        if (p1Position == boardSize * boardSize - 1) {
+        int dest = game.getBoard().getBoardSize() * game.getBoard().getBoardSize() - 1;
+        if(game.getPlayer1().getPostion() == dest){
             msg = "Player 1 won!";
-        } else if (p2Position == boardSize * boardSize - 1) {
-            msg = "Player 2 won!";
-        } else {
+        }
+        else if(game.getPlayer2().getPostion() == dest) {
+            msg = "Player2 won!";
+        }
+        else {
             return;
         }
         displayDialog(title, msg, listener);
+
+
+
+
+
     }
 
     private void displayDialog(String title, String message, DialogInterface.OnClickListener listener) {
