@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -61,16 +60,15 @@ public class GameActivity extends AppCompatActivity {
         boardView.setBoardSize(game.getBoard().getBoardSize());
         boardView.setP1Position(game.getPlayer1().getPostion());
         boardView.setP2Position(game.getPlayer2().getPostion());
+        textPlayerTurn.setText("Player 1's Turn");
     }
 
     private void takeTurn() {
-        Log.e("check", "hi" + game.getTurn() + "takeTurn");
         game.rollDice();
-        Log.e("check", "die " + game.getDie().getValue());
         final int value = game.getDie().getValue();
         String title = "You rolled a die";
         String msg = "You got " + game.getDie().getValue();
-                OnClickListener listener = new OnClickListener() {
+        OnClickListener listener = new OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 moveCurrentPiece(value);
                 dialog.dismiss();
@@ -92,28 +90,37 @@ public class GameActivity extends AppCompatActivity {
             boardView.setP2Position(game.getPlayer2().getPostion());
             textPlayerTurn.setText("Player 1's Turn");
         }
-        checkWin();
+        checkSquareEffect();
         game.nextTurn();
 
     }
 
-
-    private void checkWin() {
-        String title = "Game Over";
+    private void checkSquareEffect(){
+        String title = "";
         String msg = "";
         OnClickListener listener = new OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                resetGame();
+                game.getBoard().getSquare(game.getPlayer1().getPostion()).getEffect(game.getPlayer1());
+                game.getBoard().getSquare(game.getPlayer2().getPostion()).getEffect(game.getPlayer2());
+                boardView.setP1Position(game.getPlayer1().getPostion());
+                boardView.setP2Position(game.getPlayer2().getPostion());
+                if(game.checkWin()){
+                    resetGame();
+                }
                 dialog.dismiss();
             }
         };
-        if(game.checkWin()){
-            msg = game.getWinner()+" won!";
+
+        if(game.checkSquareEffect()) {
+            title = game.getDialogTitle();
+            msg = game.getDialogMsg();
         }
-        else {
+        else{
             return;
         }
         displayDialog(title, msg, listener);
+
+
     }
 
     private void displayDialog(String title, String message, DialogInterface.OnClickListener listener) {

@@ -1,7 +1,5 @@
 package com.ske.snakebaddesign.models;
 
-import android.util.Log;
-
 /**
  * Created by nattapat on 3/10/2016 AD.
  */
@@ -10,11 +8,9 @@ public class Game {
     private Board board;
     private Player player1;
     private Player player2;
-    private String winner;
     private Die die;
     private int turn;
-    private final int BOARDSIZE = 4;
-
+    public static final int BOARDSIZE = 6;
     private Game(){
         initComponents();
 
@@ -30,57 +26,38 @@ public class Game {
     private void initComponents() {
         player1 = new Player("Player 1");
         player2 = new Player("Player 2");
-        die = new Die();
-        board = new Board(BOARDSIZE);
+        die = Die.getInstance();
+        board = Board.getInstance();
         turn = 0;
 
     }
 
 
     public void rollDice(){
-//        p.roll();
-//        int value = p.getDieValue();
-//            String title = p.getName()+" rolled a die";
-//            String msg = p.getName()+" got " + value;
-//            DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
-//                public void onClick(DialogInterface dialog, int which) {
-//                    moveCurrentPiece(value);
-//                    dialog.dismiss();
-//                }
-//            };
-//            displayDialog(title, msg, listener);
         die.roll();
-
     }
 
     public Die getDie(){
         return die;
     }
 
-    public void moveCurrentPiece(){
-
-    }
-
-    public String getWinner(){
-        if(checkWin()) return  winner;
-        return null;
-    }
 
     public boolean checkWin(){
         int dest = board.getBoardSize() * board.getBoardSize() - 1;
         if(player1.getPostion() == dest){
-            winner = player1.getName();
             return  true;
         }
         else if(player2.getPostion() == dest ){
-            winner = player2.getName();
             return true;
         }
         return false;
     }
 
-    public void checkSquare(){
-
+    public boolean checkSquareEffect(){
+        if(turn%2==0){
+            return board.getSquare(player1.getPostion()).checkEffect(player1);
+        }
+        else return board.getSquare(player2.getPostion()).checkEffect(player2);
     }
 
 
@@ -95,7 +72,6 @@ public class Game {
 
     public void movePlayer(Player p ,int distance){
         p.setPostion(adjustPosition(p.getPostion(),distance));
-        Log.e(p.getName(),p.getPostion()+"");
     }
 
     public Player getPlayer1() {
@@ -116,14 +92,41 @@ public class Game {
 
     public void nextTurn(){
         this.turn++;
-        Log.e("nexturn"," call ");
     }
 
     public void reset(){
         player1.setPostion(0);
         player2.setPostion(0);
         board.setBoardSize(BOARDSIZE);
-        winner = "";
         turn = 0;
     }
+
+    public String getDialogTitle() {
+
+        if(board.getSquare(player1.getPostion()).checkEffect(player1)){
+           return board.getSquare(player1.getPostion()).effectTitile(player1);
+        }
+        else
+        if(board.getSquare(player2.getPostion()).checkEffect(player2)){
+            return board.getSquare(player2.getPostion()).effectTitile(player2);
+        }
+        return "";
+    }
+
+
+
+    public String getDialogMsg() {
+
+        if(board.getSquare(player1.getPostion()).checkEffect(player1)){
+            return board.getSquare(player1.getPostion()).effectMessage(player1);
+        }
+        else
+        if(board.getSquare(player2.getPostion()).checkEffect(player2)){
+            return board.getSquare(player2.getPostion()).effectMessage(player2);
+        }
+        return "";
+
+    }
+
+
 }
