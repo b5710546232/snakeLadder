@@ -52,7 +52,8 @@ public class GameActivity extends AppCompatActivity {
             }
         });
         textPlayerTurn = (TextView) findViewById(R.id.text_player_turn);
-        game = new Game();
+        game = Game.getInstance();
+        boardView.setBoard(game.getBoard());
     }
 
     private void resetGame() {
@@ -63,9 +64,9 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void takeTurn() {
-        Log.e("check", "hi" + game.getTurn() +"takeTurn");
+        Log.e("check", "hi" + game.getTurn() + "takeTurn");
         game.rollDice();
-        Log.e("check","die "+game.getDie().getValue());
+        Log.e("check", "die " + game.getDie().getValue());
         final int value = game.getDie().getValue();
         String title = "You rolled a die";
         String msg = "You got " + game.getDie().getValue();
@@ -102,26 +103,17 @@ public class GameActivity extends AppCompatActivity {
         String msg = "";
         OnClickListener listener = new OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-//                resetGame();
+                resetGame();
                 dialog.dismiss();
             }
         };
-        int dest = game.getBoard().getBoardSize() * game.getBoard().getBoardSize() - 1;
-        if(game.getPlayer1().getPostion() == dest){
-            msg = "Player 1 won!";
-        }
-        else if(game.getPlayer2().getPostion() == dest) {
-            msg = "Player2 won!";
+        if(game.checkWin()){
+            msg = game.getWinner()+" won!";
         }
         else {
             return;
         }
         displayDialog(title, msg, listener);
-
-
-
-
-
     }
 
     private void displayDialog(String title, String message, DialogInterface.OnClickListener listener) {
