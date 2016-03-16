@@ -60,7 +60,7 @@ public class GameActivity extends AppCompatActivity {
         boardView.setBoardSize(game.getBoard().getBoardSize());
         boardView.setP1Position(game.getPlayer1().getPostion());
         boardView.setP2Position(game.getPlayer2().getPostion());
-        textPlayerTurn.setText("Player 1's Turn");
+        textPlayerTurn.setText(game.getPlayer1().getName()+"'s Turn");
     }
 
     private void takeTurn() {
@@ -81,14 +81,14 @@ public class GameActivity extends AppCompatActivity {
 
     private void moveCurrentPiece(int value) {
         if(game.getTurn() % 2 ==0 ){
-            game.movePlayer(game.getPlayer1(),value);
+            game.movePlayer(game.getPlayer1(), value);
             boardView.setP1Position(game.getPlayer1().getPostion());
-            textPlayerTurn.setText("Player 2's Turn");
+            textPlayerTurn.setText(game.getPlayer2().getName()+"'s Turn");
         }
         else{
             game.movePlayer(game.getPlayer2(),value);
             boardView.setP2Position(game.getPlayer2().getPostion());
-            textPlayerTurn.setText("Player 1's Turn");
+            textPlayerTurn.setText(game.getPlayer1().getName()+"'s Turn");
         }
         checkSquareEffect();
         game.nextTurn();

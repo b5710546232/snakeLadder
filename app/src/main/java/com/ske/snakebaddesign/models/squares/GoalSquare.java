@@ -22,7 +22,6 @@ public class GoalSquare extends AbstractSquare {
     @Override
     public void getEffect(Player p) {
 
-//        Game.getInstance().setWinner(p.getName());
         Game.getInstance().reset();
     }
 
