@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -54,12 +55,16 @@ public class GameActivity extends AppCompatActivity {
         game = Game.getInstance();
         boardView.setBoard(game.getBoard());
     }
+    private void updatePlayerText(){
+        Log.e("turn ","turn "+game.getTurn()+"");
+        textPlayerTurn.setText(game.getCurrentPlayer().getName() + " 's Turn");
+    }
+
 
     private void resetGame() {
-        game.reset();
         boardView.setBoardSize(game.getBoard().getBoardSize());
+        updatePlayerText();
         updatePlayersPosition();
-        textPlayerTurn.setText(game.getPlayer1().getName() + "'s Turn");
     }
 
     private void takeTurn() {
@@ -79,17 +84,12 @@ public class GameActivity extends AppCompatActivity {
 
 
     private void moveCurrentPiece(int value) {
-        if(game.getTurn() % 2 ==0 ){
-            game.movePlayer(game.getPlayer1(), value);
-            textPlayerTurn.setText(game.getPlayer2().getName()+"'s Turn");
-        }
-        else{
-            game.movePlayer(game.getPlayer2(),value);
-            textPlayerTurn.setText(game.getPlayer1().getName()+"'s Turn");
-        }
-        updatePlayersPosition();
+        game.movePlayer(game.getCurrentPlayer(), value);
         checkSquareEffect();
-        game.nextTurn();
+        updatePlayersPosition();
+        if(!game.checkWin())game.nextTurn();
+        updatePlayerText();
+
 
     }
 

@@ -1,5 +1,8 @@
 package com.ske.snakebaddesign.models;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by nattapat on 3/10/2016 AD.
  */
@@ -8,8 +11,10 @@ public class Game {
     private Board board;
     private Player player1;
     private Player player2;
+    private List<Player> players;
     private Die die;
     private int turn;
+    private int indexCurrentPlayer;
     public static final int BOARDSIZE = 6;
     private Game(){
         initComponents();
@@ -26,6 +31,9 @@ public class Game {
     private void initComponents() {
         player1 = new Player("Player 1");
         player2 = new Player("Player 2");
+        players = new ArrayList<Player>();
+        players.add(player1);
+        players.add(player2);
         die = Die.getInstance();
         board = Board.getInstance();
         turn = 0;
@@ -44,20 +52,16 @@ public class Game {
 
     public boolean checkWin(){
         int dest = board.getBoardSize() * board.getBoardSize() - 1;
-        if(player1.getPostion() == dest){
-            return  true;
-        }
-        else if(player2.getPostion() == dest ){
-            return true;
-        }
+        if(getCurrentPlayer().getPostion()==dest)return true;
         return false;
     }
 
+    public Player getCurrentPlayer(){
+        return players.get(turn%players.size());
+    }
+
     public boolean checkSquareEffect(){
-        if(turn%2==0){
-            return board.getSquare(player1.getPostion()).checkEffect(player1);
-        }
-        else return board.getSquare(player2.getPostion()).checkEffect(player2);
+        return board.getSquare(getCurrentPlayer().getPostion()).checkEffect(getCurrentPlayer());
     }
 
 
@@ -86,44 +90,28 @@ public class Game {
         return board;
     }
 
-    public int getTurn() {
-        return turn;
-    }
-
     public void nextTurn(){
         this.turn++;
     }
 
     public void reset(){
-        player1.setPostion(0);
-        player2.setPostion(0);
+        for(Player p : players){
+            p.setPostion(0);
+        }
         board.setBoardSize(BOARDSIZE);
         turn = 0;
     }
 
     public String getDialogTitle() {
-
-        if(board.getSquare(player1.getPostion()).checkEffect(player1)){
-           return board.getSquare(player1.getPostion()).effectTitile(player1);
-        }
-        else
-        if(board.getSquare(player2.getPostion()).checkEffect(player2)){
-            return board.getSquare(player2.getPostion()).effectTitile(player2);
-        }
-        return "";
+        return board.getSquare(getCurrentPlayer().getPostion()).effectTitile(getCurrentPlayer());
     }
 
     public String getDialogMsg() {
+        return board.getSquare(getCurrentPlayer().getPostion()).effectMessage(getCurrentPlayer());
 
-        if(board.getSquare(player1.getPostion()).checkEffect(player1)){
-            return board.getSquare(player1.getPostion()).effectMessage(player1);
-        }
-        else
-        if(board.getSquare(player2.getPostion()).checkEffect(player2)){
-            return board.getSquare(player2.getPostion()).effectMessage(player2);
-        }
-        return "";
-
+    }
+    public int getTurn(){
+        return  turn;
     }
 
 
