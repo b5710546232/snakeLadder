@@ -39,7 +39,6 @@ public class Board {
         int position = 0;
         for(int i = 0; i < boardSize; i++) {
             for(int j = 0; j < boardSize; j++) {
-                int index = j *  boardSize + i;
                 if(position==0){
                     squareList.add(new StartSquare(position,"START"));
                 }

@@ -58,9 +58,8 @@ public class GameActivity extends AppCompatActivity {
     private void resetGame() {
         game.reset();
         boardView.setBoardSize(game.getBoard().getBoardSize());
-        boardView.setP1Position(game.getPlayer1().getPostion());
-        boardView.setP2Position(game.getPlayer2().getPostion());
-        textPlayerTurn.setText(game.getPlayer1().getName()+"'s Turn");
+        updatePlayersPosition();
+        textPlayerTurn.setText(game.getPlayer1().getName() + "'s Turn");
     }
 
     private void takeTurn() {
@@ -102,8 +101,7 @@ public class GameActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 game.getBoard().getSquare(game.getPlayer1().getPostion()).getEffect(game.getPlayer1());
                 game.getBoard().getSquare(game.getPlayer2().getPostion()).getEffect(game.getPlayer2());
-                boardView.setP1Position(game.getPlayer1().getPostion());
-                boardView.setP2Position(game.getPlayer2().getPostion());
+                updatePlayersPosition();
                 if(game.checkWin()){
                     resetGame();
                 }
@@ -121,6 +119,11 @@ public class GameActivity extends AppCompatActivity {
         displayDialog(title, msg, listener);
 
 
+    }
+
+    private void updatePlayersPosition(){
+        boardView.setP1Position(game.getPlayer1().getPostion());
+        boardView.setP2Position(game.getPlayer2().getPostion());
     }
 
     private void displayDialog(String title, String message, DialogInterface.OnClickListener listener) {

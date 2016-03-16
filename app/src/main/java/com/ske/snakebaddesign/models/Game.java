@@ -4,7 +4,7 @@ package com.ske.snakebaddesign.models;
  * Created by nattapat on 3/10/2016 AD.
  */
 public class Game {
-    public static Game instance;
+    private static Game instance;
     private Board board;
     private Player player1;
     private Player player2;
@@ -112,8 +112,6 @@ public class Game {
         }
         return "";
     }
-
-
 
     public String getDialogMsg() {
 
