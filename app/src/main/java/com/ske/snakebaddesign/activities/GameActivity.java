@@ -70,8 +70,8 @@ public class GameActivity extends AppCompatActivity {
     private void takeTurn() {
         game.rollDice();
         final int value = game.getDie().getValue();
-        String title = "You rolled a die";
-        String msg = "You got " + game.getDie().getValue();
+        String title = game.getCurrentPlayer().getName()+" rolled a die";
+        String msg = game.getCurrentPlayer().getName()+" got " + game.getDie().getValue();
         OnClickListener listener = new OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 moveCurrentPiece(value);
