@@ -62,6 +62,7 @@ public class GameActivity extends AppCompatActivity {
 
 
     private void resetGame() {
+        game.reset();
         boardView.setBoardSize(game.getBoard().getBoardSize());
         updatePlayerText();
         updatePlayersPosition();
@@ -89,8 +90,6 @@ public class GameActivity extends AppCompatActivity {
         updatePlayersPosition();
         if(!game.checkWin())game.nextTurn();
         updatePlayerText();
-
-
     }
 
     private void checkSquareEffect(){
@@ -98,8 +97,7 @@ public class GameActivity extends AppCompatActivity {
         String msg = "";
         OnClickListener listener = new OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                game.getBoard().getSquare(game.getPlayer1().getPostion()).getEffect(game.getPlayer1());
-                game.getBoard().getSquare(game.getPlayer2().getPostion()).getEffect(game.getPlayer2());
+                game.getBoard().getSquare(game.getCurrentPlayer().getPostion()).getEffect(game.getCurrentPlayer());
                 updatePlayersPosition();
                 if(game.checkWin()){
                     resetGame();
@@ -107,7 +105,6 @@ public class GameActivity extends AppCompatActivity {
                 dialog.dismiss();
             }
         };
-
         if(game.checkSquareEffect()) {
             title = game.getDialogTitle();
             msg = game.getDialogMsg();
@@ -116,7 +113,6 @@ public class GameActivity extends AppCompatActivity {
             return;
         }
         displayDialog(title, msg, listener);
-
 
     }
 
@@ -133,5 +129,4 @@ public class GameActivity extends AppCompatActivity {
         alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK", listener);
         alertDialog.show();
     }
-
 }
